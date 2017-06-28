@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions>
+        <runningAs username="sa"/>
+    </preConditions>
+
+    <changeSet author="sa" id="createTable-accounts">
+        <createTable tableName="accounts">
+            <column name="id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="balance" type="double">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="sa" id="addPrimaryKey-pk_accounts">
+        <addPrimaryKey columnNames="id"
+                       constraintName="pk_accounts"
+                       tableName="accounts"/>
+    </changeSet>
+
+    <changeSet author="sa" id="createTable-users">
+        <createTable tableName="users">
+            <column name="id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="sa" id="addPrimaryKey-pk_users">
+        <addPrimaryKey columnNames="id"
+                       constraintName="pk_users"
+                       tableName="users"/>
+    </changeSet>
+
+    <changeSet author="sa" id="createTable-currencies">
+        <createTable tableName="currencies">
+            <column name="id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="sa" id="addPrimaryKey-pk_currencies">
+        <addPrimaryKey columnNames="id"
+                       constraintName="pk_currencies"
+                       tableName="currencies"/>
+    </changeSet>
+
+    <changeSet author="sa" id="addForeignKeyConstraint-fk_accounts_users">
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="accounts"
+                                 constraintName="fk_accounts_users"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet author="sa" id="addForeignKeyConstraint-fk_accounts_currencies">
+        <addForeignKeyConstraint baseColumnNames="currency_id"
+                                 baseTableName="accounts"
+                                 constraintName="fk_accounts_currencies"
+                                 referencedColumnNames="id"
+                                 referencedTableName="currencies"/>
+    </changeSet>
+
+</databaseChangeLog>

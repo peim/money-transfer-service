@@ -6,6 +6,6 @@ import play.api.libs.json.{Format, Json}
 
 case class User(id: UUID, name: String)
 
-object User {
+object User extends ((UUID, String) => User) {
   implicit val userFormat: Format[User] = Json.format[User]
 }

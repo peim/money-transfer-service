@@ -4,8 +4,8 @@ import java.util.UUID
 
 import play.api.libs.json.{Format, Json}
 
-class Account(id: UUID, userId: UUID, currentId: UUID, balance: Double)
+case class Account(id: UUID, userId: UUID, currencyId: Int, balance: Double)
 
-object Account {
+object Account extends ((UUID, UUID, Int, Double) => Account) {
   implicit val accountFormat: Format[Account] = Json.format[Account]
 }
