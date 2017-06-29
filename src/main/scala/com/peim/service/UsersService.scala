@@ -2,7 +2,7 @@ package com.peim.service
 
 import com.peim.model.User
 import com.peim.model.table._
-import com.peim.utils.DatabaseService
+import com.peim.utils.{BootData, DatabaseService}
 import slick.driver.H2Driver.api._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,10 +18,7 @@ class UsersService(val databaseService: DatabaseService)(implicit executionConte
 
   private val setup = DBIO.seq(
     users.schema.create,
-
-    users += User(1, "Alex"),
-    users += User(2, "Max"),
-    users += User(3, "Fred")
+    users ++= BootData.getUsers
   )
 
   db.run(setup)

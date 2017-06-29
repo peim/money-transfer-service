@@ -11,13 +11,9 @@ class HttpService(accountsService: AccountsService,
                   usersService: UsersService,
                   currenciesService: CurrenciesService)(implicit executionContext: ExecutionContext) {
 
-  private val accountsRouter = new AccountsServiceApi(accountsService).route
-  private val usersRouter = new UsersServiceApi(usersService).route
-  private val currenciesRouter = new CurrenciesServiceApi(currenciesService).route
+  val accountsRouter = new AccountsServiceApi(accountsService).route
+  val usersRouter = new UsersServiceApi(usersService).route
+  val currenciesRouter = new CurrenciesServiceApi(currenciesService).route
 
-  val routes: Route =
-    pathPrefix("v1") {
-      accountsRouter ~ usersRouter ~ currenciesRouter
-    }
-
+  val routes: Route = accountsRouter ~ usersRouter ~ currenciesRouter
 }

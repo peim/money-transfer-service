@@ -3,7 +3,6 @@ package com.peim.http.api
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.directives.FutureDirectives.onSuccess
 import akka.http.scaladsl.server.directives.MarshallingDirectives.{as, entity}
 import com.peim.model.Account
 import com.peim.service.AccountsService
