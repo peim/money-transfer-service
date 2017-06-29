@@ -2,7 +2,6 @@ package com.peim.utils
 
 import java.sql.{Connection, DriverManager}
 
-import com.typesafe.config.ConfigFactory
 import liquibase.Liquibase
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
@@ -19,8 +18,9 @@ class DatabaseMigration {
     new Liquibase(changeLogFile, resourceAccessor, database)
   }
 
-  def migrate(): Unit = {
-    val dbConnection = getConnection
+  def migrate(driver: String, url: String, user: String, password: String): Unit = {
+    Class.forName(driver)
+    val dbConnection = DriverManager.getConnection(url, user, password)
     val liquibase = createLiquibase(dbConnection)
     try {
       liquibase.update("MIGRATION")
@@ -31,18 +31,6 @@ class DatabaseMigration {
       dbConnection.rollback()
       dbConnection.close()
     }
-  }
-
-  def getConnection = {
-    val config = ConfigFactory.load()
-
-    val url: String = config.getString("database.db.url")
-    val driver: String = config.getString("database.db.driver")
-    val user: String = "sa"//config.getString("database.db.user")
-    val password: String = ""//config.getString("database.db.password")
-
-    Class.forName(driver)
-    DriverManager.getConnection(url, user, password)
   }
 }
 

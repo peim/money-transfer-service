@@ -1,0 +1,22 @@
+<configuration>
+    <timestamp key="_dailyLog" datePattern="yyyyMMdd" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <logger name="application" level="INFO" />
+    <logger name="slick" level="INFO" />
+    <logger name="com.zaxxer.hikari" level="INFO" />
+
+    <root level="DEBUG">
+        <appender-ref ref="ASYNCSTDOUT" />
+    </root>
+
+</configuration>
