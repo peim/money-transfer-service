@@ -15,7 +15,7 @@ class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
       Get("/users") ~> route ~> check {
         status should be(OK)
         responseAs[Seq[User]] should have size 3
-//        responseAs[Seq[User]] should contain allOf(BootData.getUsers)
+        responseAs[Seq[User]] should be(BootData.getUsers)
       }
     }
 
