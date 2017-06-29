@@ -1,15 +1,13 @@
 package com.peim.service
 
-import java.util.UUID
-
 import com.peim.model.Account
-import com.peim.model.table.AccountsTable
+import com.peim.model.table._
 import com.peim.utils.DatabaseService
 import slick.driver.H2Driver.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccountsService(val databaseService: DatabaseService)(implicit executionContext: ExecutionContext) extends AccountsTable {
+class AccountsService(val databaseService: DatabaseService)(implicit executionContext: ExecutionContext) {
 
   import databaseService._
 
