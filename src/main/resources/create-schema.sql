@@ -1,5 +1,13 @@
-CREATE TABLE accounts(
-    id uuid,
-    user_id uuid,
-    currency_id int,
-    balance double);
+--CREATE TABLE accounts(
+--    id uuid,
+--    user_id uuid,
+--    currency_id int,
+--    balance double);
+--
+--CREATE TABLE users(
+--    id uuid,
+--    name varchar);
+--
+--CREATE TABLE currencies(
+--    id int,
+--    code varchar);

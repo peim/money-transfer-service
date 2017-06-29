@@ -1,7 +1,7 @@
 package com.peim.model.table
 
 import com.peim.model.Currency
-import com.peim.utils.AdvancedH2Driver.api._
+import slick.driver.H2Driver.api._
 import slick.lifted.Tag
 
 trait CurrenciesTable {

@@ -3,7 +3,7 @@ package com.peim.service
 import com.peim.model.User
 import com.peim.model.table.UsersTable
 import com.peim.utils.DatabaseService
-import com.peim.utils.AdvancedH2Driver.api._
+import slick.driver.H2Driver.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 

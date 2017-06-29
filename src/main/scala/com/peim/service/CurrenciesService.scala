@@ -2,7 +2,7 @@ package com.peim.service
 
 import com.peim.model.Currency
 import com.peim.model.table.CurrenciesTable
-import com.peim.utils.AdvancedH2Driver.api._
+import slick.driver.H2Driver.api._
 import com.peim.utils.DatabaseService
 
 import scala.concurrent.{ExecutionContext, Future}

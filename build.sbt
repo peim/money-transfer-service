@@ -32,10 +32,6 @@ libraryDependencies ++= {
 
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 
-    "com.github.tminglei" %% "slick-pg" % slickPgVersion,
-    "com.github.tminglei" %% "slick-pg_play-json" % slickPgVersion,
-    "com.github.tminglei" %% "slick-pg_date2" % slickPgVersion,
-
     "org.liquibase" %	"liquibase-core" % "3.5.3",
     "ch.qos.logback" % "logback-classic" % "1.2.1",
     "com.h2database" % "h2" % "1.4.196",
