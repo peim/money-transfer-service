@@ -13,8 +13,8 @@ class CurrenciesService(val databaseService: DatabaseService)(implicit execution
 
   def getCurrencies: Future[Seq[Currency]] = db.run(currencies.result)
 
-  def createCurrency(currency: Currency): Future[Currency] =
-    db.run(currencies returning currencies += currency)
+  def createCurrency(currency: Currency): Future[Int] =
+    db.run(currencies returning currencies.map(_.id) += currency)
 
   private val setup = DBIO.seq(
     currencies.schema.create,

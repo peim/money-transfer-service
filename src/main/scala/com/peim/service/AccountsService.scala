@@ -15,8 +15,8 @@ class AccountsService(val databaseService: DatabaseService)(implicit executionCo
 
   def getAccounts: Future[Seq[Account]] = db.run(accounts.result)
 
-  def createAccount(account: Account): Future[Account] =
-    db.run(accounts returning accounts += account)
+  def createAccount(account: Account): Future[Int] =
+    db.run(accounts returning accounts.map(_.id) += account)
 
   private val setup = DBIO.seq(
     accounts.schema.create,

@@ -15,8 +15,8 @@ class UsersService(val databaseService: DatabaseService)(implicit executionConte
 
   def getUsers: Future[Seq[User]] = db.run(users.result)
 
-  def createUser(user: User): Future[User] =
-    db.run(users returning users += user)
+  def createUser(user: User): Future[Int] =
+    db.run(users returning users.map(_.id) += user)
 
   private val setup = DBIO.seq(
     users.schema.create,
