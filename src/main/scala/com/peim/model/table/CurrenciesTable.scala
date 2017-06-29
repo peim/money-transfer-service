@@ -7,12 +7,10 @@ import slick.lifted.Tag
 trait CurrenciesTable {
 
   class Currencies(tag: Tag) extends Table[Currency](tag, "currencies") {
-    def id = column[Int]("id")
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def code = column[String]("code")
 
     def * = (id, code) <> (Currency.tupled, Currency.unapply)
-
-    def pkCurrencies = primaryKey("pk_currencies", id)
   }
 
   protected val currencies = TableQuery[Currencies]

@@ -3,15 +3,13 @@ package com.peim
 import akka.actor.ActorSystem
 import akka.event.{Logging, LoggingAdapter}
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.directives.DebuggingDirectives
 import akka.stream.ActorMaterializer
 import com.peim.http.HttpService
-import com.peim.service.AccountsService
+import com.peim.service.{AccountsService, CurrenciesService, UsersService}
 import com.peim.utils.{Config, DatabaseService}
 import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success, Try}
 
 object Main extends App with Config with LazyLogging{
 
@@ -22,9 +20,10 @@ object Main extends App with Config with LazyLogging{
 
   val databaseService = new DatabaseService
   val accountsService = new AccountsService(databaseService)
+  val usersService = new UsersService(databaseService)
+  val currenciesService = new CurrenciesService(databaseService)
 
-  val routes = new HttpService(accountsService).routes
- // val loggedRoutes = DebuggingDirectives.logRequestResult("Request:: ", Logging.InfoLevel)(routes)
+  val routes = new HttpService(accountsService, usersService, currenciesService).routes
 
   Http().bindAndHandle(routes, httpHost, httpPort).map {
     binding => log.info("REST interface bound to {}", binding.localAddress)

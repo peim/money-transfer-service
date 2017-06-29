@@ -2,8 +2,8 @@ package com.peim.service
 
 import com.peim.model.Currency
 import com.peim.model.table.CurrenciesTable
-import slick.driver.H2Driver.api._
 import com.peim.utils.DatabaseService
+import slick.driver.H2Driver.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,9 +11,18 @@ class CurrenciesService(val databaseService: DatabaseService)(implicit execution
 
   import databaseService._
 
-  def getAccounts: Future[Seq[Currency]] = db.run(currencies.result)
+  def getCurrencies: Future[Seq[Currency]] = db.run(currencies.result)
 
-  def createAccount(currency: Currency): Future[Currency] =
+  def createCurrency(currency: Currency): Future[Currency] =
     db.run(currencies returning currencies += currency)
 
+  private val setup = DBIO.seq(
+    currencies.schema.create,
+
+    currencies += Currency(1, "USD"),
+    currencies += Currency(2, "EUR"),
+    currencies += Currency(3, "GBR")
+  )
+
+  db.run(setup)
 }

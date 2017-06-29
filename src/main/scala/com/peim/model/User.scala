@@ -1,11 +1,9 @@
 package com.peim.model
 
-import java.util.UUID
-
 import play.api.libs.json.{Format, Json}
 
-case class User(id: UUID, name: String)
+case class User(id: Int, name: String)
 
-object User extends ((UUID, String) => User) {
+object User extends ((Int, String) => User) {
   implicit val userFormat: Format[User] = Json.format[User]
 }

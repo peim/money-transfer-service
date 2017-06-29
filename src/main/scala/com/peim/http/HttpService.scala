@@ -1,21 +1,23 @@
 package com.peim.http
 
-import akka.http.scaladsl.server.Directives.pathPrefix
-import com.peim.http.api.{AccountsServiceApi, UsersServiceApi}
 import akka.http.scaladsl.server.Directives._
-import com.peim.service.AccountsService
+import akka.http.scaladsl.server.Route
+import com.peim.http.api.{AccountsServiceApi, CurrenciesServiceApi, UsersServiceApi}
+import com.peim.service.{AccountsService, CurrenciesService, UsersService}
 
 import scala.concurrent.ExecutionContext
 
-class HttpService(accountsService: AccountsService)(implicit executionContext: ExecutionContext) {
+class HttpService(accountsService: AccountsService,
+                  usersService: UsersService,
+                  currenciesService: CurrenciesService)(implicit executionContext: ExecutionContext) {
 
-  val usersRouter = new UsersServiceApi().route
-  val accountsRouter = new AccountsServiceApi(accountsService).route
+  private val accountsRouter = new AccountsServiceApi(accountsService).route
+  private val usersRouter = new UsersServiceApi(usersService).route
+  private val currenciesRouter = new CurrenciesServiceApi(currenciesService).route
 
-  val routes =
+  val routes: Route =
     pathPrefix("v1") {
-        usersRouter ~
-          accountsRouter
+      accountsRouter ~ usersRouter ~ currenciesRouter
     }
 
 }
