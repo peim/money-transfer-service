@@ -3,17 +3,13 @@ package com.peim.http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.peim.http.api.{AccountsServiceApi, CurrenciesServiceApi, UsersServiceApi}
-import com.peim.service.{AccountsService, CurrenciesService, UsersService}
+import scaldi.{Injectable, Injector}
 
-import scala.concurrent.ExecutionContext
+class HttpService(implicit inj: Injector) extends Injectable {
 
-class HttpService(accountsService: AccountsService,
-                  usersService: UsersService,
-                  currenciesService: CurrenciesService)(implicit executionContext: ExecutionContext) {
-
-  val accountsRouter = new AccountsServiceApi(accountsService).route
-  val usersRouter = new UsersServiceApi(usersService).route
-  val currenciesRouter = new CurrenciesServiceApi(currenciesService).route
+  val accountsRouter = new AccountsServiceApi().route
+  val usersRouter = new UsersServiceApi().route
+  val currenciesRouter = new CurrenciesServiceApi().route
 
   val routes: Route = accountsRouter ~ usersRouter ~ currenciesRouter
 }

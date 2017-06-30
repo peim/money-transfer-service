@@ -7,10 +7,13 @@ import akka.http.scaladsl.server.directives.MarshallingDirectives.{as, entity}
 import com.peim.model.Currency
 import com.peim.service.CurrenciesService
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
+import scaldi.{Injectable, Injector}
 
 import scala.util.{Failure, Success}
 
-class CurrenciesServiceApi(currenciesService: CurrenciesService) extends PlayJsonSupport {
+class CurrenciesServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSupport {
+
+  private val currenciesService = inject[CurrenciesService]
 
   val route: Route = pathPrefix("currencies") {
     pathEndOrSingleSlash {

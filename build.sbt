@@ -6,6 +6,8 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
+parallelExecution in Test := false
+
 scalacOptions := Seq(
   "-deprecation",
   "-feature",
@@ -29,6 +31,9 @@ libraryDependencies ++= {
     "de.heikoseeberger" %% "akka-http-play-json" % "1.12.0",
     "com.typesafe.slick" %% "slick" % slickVersion,
     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
+
+    "org.scaldi" %% "scaldi" % "0.5.8",
+    "org.scaldi" %% "scaldi-akka" % "0.5.8",
 
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 

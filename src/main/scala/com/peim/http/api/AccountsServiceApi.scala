@@ -7,10 +7,13 @@ import akka.http.scaladsl.server.directives.MarshallingDirectives.{as, entity}
 import com.peim.model.Account
 import com.peim.service.AccountsService
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
+import scaldi.{Injectable, Injector}
 
 import scala.util.{Failure, Success}
 
-class AccountsServiceApi(val accountsService: AccountsService) extends PlayJsonSupport {
+class AccountsServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSupport {
+
+  private val accountsService = inject[AccountsService]
 
   val route: Route = pathPrefix("accounts") {
     pathEndOrSingleSlash {
