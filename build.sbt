@@ -30,14 +30,12 @@ libraryDependencies ++= {
 
     "de.heikoseeberger" %% "akka-http-play-json" % "1.12.0",
     "com.typesafe.slick" %% "slick" % slickVersion,
-    "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
 
     "org.scaldi" %% "scaldi" % "0.5.8",
     "org.scaldi" %% "scaldi-akka" % "0.5.8",
 
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 
-    "org.liquibase" %	"liquibase-core" % "3.5.3",
     "ch.qos.logback" % "logback-classic" % "1.2.1",
     "com.h2database" % "h2" % "1.4.196",
 
