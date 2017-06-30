@@ -18,14 +18,14 @@ class AccountsServiceApi(implicit inj: Injector) extends Injectable with PlayJso
   val route: Route = pathPrefix("accounts") {
     pathEndOrSingleSlash {
       get {
-        onComplete(accountsService.getAccounts) {
+        onComplete(accountsService.findAll) {
           case Success(result) => complete(OK, result)
           case Failure(error) => complete(InternalServerError, error.getMessage)
         }
       } ~
         post {
           entity(as[Account]) { account =>
-            onComplete(accountsService.createAccount(account)) {
+            onComplete(accountsService.create(account)) {
               case Success(result) => complete(Created, result)
               case Failure(error) => complete(InternalServerError, error.getMessage)
             }

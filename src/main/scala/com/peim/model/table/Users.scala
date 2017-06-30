@@ -5,7 +5,7 @@ import slick.driver.H2Driver.api._
 import slick.lifted.Tag
 
 class Users(tag: Tag) extends Table[User](tag, "users") {
-  def id = column[Int]("id", O.PrimaryKey)
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
 
   def * = (id, name) <> (User.tupled, User.unapply)

@@ -10,12 +10,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AccountsService(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
 
-  private val databaseService = inject[DatabaseService]
+  private val db = inject[DatabaseService].db
 
-  import databaseService._
+  def findAll: Future[Seq[Account]] = db.run(accounts.result)
 
-  def getAccounts: Future[Seq[Account]] = db.run(accounts.result)
+  def findById(id: Int): Future[Option[Account]] =
+    db.run(accounts.filter(_.id === id).result.headOption)
 
-  def createAccount(account: Account): Future[Int] =
+  def create(account: Account): Future[Int] =
     db.run(accounts returning accounts.map(_.id) += account)
+
+  def delete(id: Int): Future[Int] =
+    db.run(accounts.filter(_.id === id).delete)
 }

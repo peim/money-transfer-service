@@ -18,14 +18,14 @@ class CurrenciesServiceApi(implicit inj: Injector) extends Injectable with PlayJ
   val route: Route = pathPrefix("currencies") {
     pathEndOrSingleSlash {
       get {
-        onComplete(currenciesService.getCurrencies) {
+        onComplete(currenciesService.findAll) {
           case Success(result) => complete(OK, result)
           case Failure(error) => complete(InternalServerError, error.getMessage)
         }
       } ~
         post {
           entity(as[Currency]) { currency =>
-            onComplete(currenciesService.createCurrency(currency)) {
+            onComplete(currenciesService.create(currency)) {
               case Success(result) => complete(Created, result)
               case Failure(error) => complete(InternalServerError, error.getMessage)
             }

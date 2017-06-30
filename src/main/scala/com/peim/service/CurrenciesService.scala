@@ -10,12 +10,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CurrenciesService(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
 
-  private val databaseService = inject[DatabaseService]
+  private val db = inject[DatabaseService].db
 
-  import databaseService._
+  def findAll: Future[Seq[Currency]] = db.run(currencies.result)
 
-  def getCurrencies: Future[Seq[Currency]] = db.run(currencies.result)
+  def findById(id: Int): Future[Option[Currency]] =
+    db.run(currencies.filter(_.id === id).result.headOption)
 
-  def createCurrency(currency: Currency): Future[Int] =
+  def create(currency: Currency): Future[Int] =
     db.run(currencies returning currencies.map(_.id) += currency)
+
+  def delete(id: Int): Future[Int] =
+    db.run(currencies.filter(_.id === id).delete)
 }
