@@ -20,8 +20,6 @@ scalacOptions := Seq(
 libraryDependencies ++= {
   val akkaVersion = "2.4.17"
   val akkaHttpVersion = "10.0.3"
-  val slickVersion = "3.1.1"
-  val slickPgVersion = "0.14.6"
   Seq(
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
@@ -29,7 +27,7 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
 
     "de.heikoseeberger" %% "akka-http-play-json" % "1.12.0",
-    "com.typesafe.slick" %% "slick" % slickVersion,
+    "com.typesafe.slick" %% "slick" % "3.1.1",
 
     "org.scaldi" %% "scaldi" % "0.5.8",
     "org.scaldi" %% "scaldi-akka" % "0.5.8",
