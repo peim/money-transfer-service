@@ -31,6 +31,25 @@ class AccountsServiceApi(implicit inj: Injector) extends Injectable with PlayJso
             }
           }
         }
-    }
+    } ~
+      path(IntNumber) { id =>
+        pathEndOrSingleSlash {
+          get {
+            onComplete(accountsService.findById(id)) {
+              case Success(result) => result match {
+                case Some(account) => complete(OK, account)
+                case None => complete(NotFound)
+              }
+              case Failure(error) => complete(InternalServerError, error.getMessage)
+            }
+          } ~
+            delete {
+              onComplete(accountsService.delete(id)) {
+                case Success(_) => complete(NoContent)
+                case Failure(error) => complete(InternalServerError, error.getMessage)
+              }
+            }
+        }
+      }
   }
 }

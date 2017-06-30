@@ -5,7 +5,7 @@ import slick.driver.H2Driver.api._
 import slick.lifted.Tag
 
 class Accounts(tag: Tag) extends Table[Account](tag, "accounts") {
-  def id = column[Int]("id", O.PrimaryKey)
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def userId = column[Int]("user_id")
   def currencyId = column[Int]("currency_id")
   def balance = column[Double]("balance")

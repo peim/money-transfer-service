@@ -1,6 +1,6 @@
 package com.peim.http.api
 
-import akka.http.scaladsl.model.StatusCodes.{Created, InternalServerError, OK}
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives.{complete, get, onComplete, pathEndOrSingleSlash, pathPrefix, post, _}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MarshallingDirectives.{as, entity}
@@ -31,6 +31,27 @@ class CurrenciesServiceApi(implicit inj: Injector) extends Injectable with PlayJ
             }
           }
         }
-    }
+    } ~
+      path(IntNumber) { id =>
+        pathEndOrSingleSlash {
+          get {
+            onComplete(currenciesService.findById(id)) {
+              case Success(result) => result match {
+                case Some(currency) => complete(OK, currency)
+                case None => complete(NotFound)
+              }
+              case Failure(error) => complete(InternalServerError, error.getMessage)
+            }
+          } ~
+            delete {
+              onComplete(currenciesService.delete(id)) {
+                case Success(_) => complete(NoContent)
+                case Failure(error) =>
+                  println(error)
+                  complete(InternalServerError, error.getMessage)
+              }
+            }
+        }
+      }
   }
 }
