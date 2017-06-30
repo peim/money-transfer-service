@@ -71,6 +71,5 @@ class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
     //        }
     //      }
     //    }
-
   }
 }
