@@ -57,10 +57,10 @@ class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
     }
 
     "delete user" in {
-      val user = users.find(_.id == 3).get
-      Delete(s"/users/${user.id}") ~> route ~> check {
+      val id = 4
+      Delete(s"/users/$id") ~> route ~> check {
         response.status should be(NoContent)
-        whenReady(usersService.findById(user.id)) { result =>
+        whenReady(usersService.findById(id)) { result =>
           result should be(Option.empty[User])
         }
       }

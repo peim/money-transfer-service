@@ -17,7 +17,17 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
   def findById(id: Int): Future[Option[Transfer]] =
     db.run(transfers.filter(_.id === id).result.headOption)
 
-  def create(transfer: Transfer): Future[Int] = {
-    db.run(transfers returning transfers.map(_.id) += transfer)
+  def create(transfer: Transfer, debit: Double, credit: Double): Future[Int] = {
+    val createTransfer = (for {
+      _ <- accounts.filter(_.id === transfer.sourceAccountId)
+        .map(old => old.balance)
+        .update(debit)
+      _ <- accounts.filter(_.id === transfer.destAccountId)
+        .map(old => old.balance)
+        .update(credit)
+      t <- transfers returning transfers.map(_.id) += transfer
+    } yield t).transactionally
+
+    db.run(createTransfer)
   }
 }
