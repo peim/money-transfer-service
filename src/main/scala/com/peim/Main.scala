@@ -5,7 +5,7 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.peim.http.HttpService
-import com.peim.service.{AccountsService, CurrenciesService, UsersService}
+import com.peim.service._
 import com.peim.utils.{BootData, Config, DatabaseService}
 import scaldi.{Injectable, Module}
 
@@ -20,6 +20,7 @@ object Main extends App with Injectable with Config {
     bind[AccountsService] to new AccountsService()
     bind[UsersService] to new UsersService()
     bind[CurrenciesService] to new CurrenciesService()
+    bind[TransfersService] to new TransfersService()
   }
 
   implicit val system = inject[ActorSystem]

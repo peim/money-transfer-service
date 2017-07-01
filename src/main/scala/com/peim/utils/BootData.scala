@@ -1,7 +1,7 @@
 package com.peim.utils
 
-import com.peim.model.table.{accounts, currencies, users}
-import com.peim.model.{Account, Currency, User}
+import com.peim.model.table._
+import com.peim.model._
 import scaldi.{Injectable, Injector}
 import slick.driver.H2Driver.api._
 
@@ -15,19 +15,20 @@ class BootData(implicit inj: Injector) extends Injectable {
   }
 
   private val setup = DBIO.seq(
-    (accounts.schema ++ users.schema ++ currencies.schema).create,
+    (accounts.schema ++ users.schema ++ currencies.schema ++ transfers.schema).create,
     currencies ++= getCurrencies,
     users ++= getUsers,
-    accounts ++= getAccounts
+    accounts ++= getAccounts,
+    transfers ++= getTransfers
   )
 }
 
 object BootData {
 
-  def getAccounts: Seq[Account] = Seq(
-    Account(1, 1, 2, 500),
-    Account(2, 1, 1, 200),
-    Account(3, 2, 2, 1000)
+  def getCurrencies: Seq[Currency] = Seq(
+    Currency(1, "USD"),
+    Currency(2, "EUR"),
+    Currency(3, "GBR")
   )
 
   def getUsers: Seq[User] = Seq(
@@ -36,9 +37,15 @@ object BootData {
     User(3, "Fred")
   )
 
-  def getCurrencies: Seq[Currency] = Seq(
-    Currency(1, "USD"),
-    Currency(2, "EUR"),
-    Currency(3, "GBR")
+  def getAccounts: Seq[Account] = Seq(
+    Account(1, 1, 2, 500),
+    Account(2, 1, 1, 200),
+    Account(3, 2, 2, 1000)
+  )
+
+  def getTransfers: Seq[Transfer] = Seq(
+    Transfer(1, 1, 2, 200),
+    Transfer(2, 3, 1, 300),
+    Transfer(3, 2, 3, 100)
   )
 }

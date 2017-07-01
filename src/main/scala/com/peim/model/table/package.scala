@@ -9,4 +9,6 @@ package object table {
   val currencies: TableQuery[Currencies] = TableQuery[Currencies]
 
   val users:TableQuery[Users] = TableQuery[Users]
+
+  val transfers:TableQuery[Transfers] = TableQuery[Transfers]
 }

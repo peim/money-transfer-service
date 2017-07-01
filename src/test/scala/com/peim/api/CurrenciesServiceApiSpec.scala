@@ -1,7 +1,8 @@
-package com.peim.http.api
+package com.peim.api
 
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
+import com.peim.BaseServiceTest
 import com.peim.model.Currency
 import com.peim.service.CurrenciesService
 import com.peim.utils.BootData
