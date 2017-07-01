@@ -38,10 +38,10 @@ object BootData {
   )
 
   def getAccounts: Seq[Account] = Seq(
-    Account(1, 1, 2, 500),
-    Account(2, 1, 1, 200),
+    Account(1, 3, 1, 500),
+    Account(2, 1, 2, 200),
     Account(3, 3, 1, 1000),
-    Account(4, 3, 2, 800),
+    Account(4, 1, 3, 800),
     Account(5, 2, 3, 400)
   )
 

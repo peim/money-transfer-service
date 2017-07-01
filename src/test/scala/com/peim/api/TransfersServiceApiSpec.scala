@@ -54,10 +54,29 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
       }
     }
 
-    "fail create transfer" in {
+    "fail create transfer [1]" in {
       val sourceAccount = accounts.find(_.id == 4).get
       val destAccount = accounts.find(_.id == 5).get
       val newTransfer = Transfer(5, sourceAccount.id, destAccount.id, 1000)
+      val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newTransfer).toString)
+      Post(s"/transfers", requestEntity) ~> route ~> check {
+        status should be(InternalServerError)
+        whenReady(transfersRepository.findById(newTransfer.id)) { result =>
+          result should be(Option.empty[Transfer])
+        }
+        whenReady(accountsRepository.findById(sourceAccount.id)) { result =>
+          result.map(_.balance) should be(Some(sourceAccount.balance))
+        }
+        whenReady(accountsRepository.findById(destAccount.id)) { result =>
+          result.map(_.balance) should be(Some(destAccount.balance))
+        }
+      }
+    }
+
+    "fail create transfer [2]" in {
+      val sourceAccount = accounts.find(_.id == 2).get
+      val destAccount = accounts.find(_.id == 4).get
+      val newTransfer = Transfer(5, sourceAccount.id, destAccount.id, 100)
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newTransfer).toString)
       Post(s"/transfers", requestEntity) ~> route ~> check {
         status should be(InternalServerError)

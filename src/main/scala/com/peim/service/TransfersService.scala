@@ -18,12 +18,15 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
       dest <- accountsRepository.findById(transfer.destAccountId)
       res <- (src, dest) match {
         case (Some(srcAcc), Some(destAcc)) =>
-          if (srcAcc.balance >= transfer.sum) {
-            val debit = srcAcc.balance - transfer.sum
-            val credit = destAcc.balance + transfer.sum
-            transfersRepository.create(transfer, debit, credit).map(Try(_))
-          }
-          else Future(Failure(new RuntimeException(s"Недостаточно средств на счете списания")))
+          if (srcAcc.currencyId == destAcc.currencyId) {
+            if (srcAcc.balance >= transfer.sum) {
+              val debit = srcAcc.balance - transfer.sum
+              val credit = destAcc.balance + transfer.sum
+              transfersRepository.create(transfer, debit, credit).map(Try(_))
+            } else Future(Failure(
+              new RuntimeException(s"Недостаточно средств на счете списания id ${transfer.destAccountId}")))
+          } else Future(Failure(
+            new RuntimeException(s"Валюта счетов списания и зачисления должна быть одинаковой")))
         case (Some(_), None) => Future(Failure(
           new RuntimeException(s"Счет зачисления с id ${transfer.destAccountId} не найден")))
         case (None, Some(_)) => Future(Failure(
