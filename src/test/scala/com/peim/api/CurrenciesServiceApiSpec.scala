@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
 import com.peim.model.Currency
-import com.peim.service.CurrenciesService
+import com.peim.repository.CurrenciesRepository
 import com.peim.utils.BootData
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
@@ -12,7 +12,7 @@ import play.api.libs.json.Json
 class CurrenciesServiceApiSpec extends BaseServiceTest with ScalaFutures {
 
   private val currencies = BootData.getCurrencies
-  private val currenciesService = inject[CurrenciesService]
+  private val currenciesRepository = inject[CurrenciesRepository]
   private val route = httpService.currenciesRouter
 
   "Currencies service" should {
@@ -38,7 +38,7 @@ class CurrenciesServiceApiSpec extends BaseServiceTest with ScalaFutures {
       Post(s"/currencies", requestEntity) ~> route ~> check {
         status should be(Created)
         responseAs[Int] should be(newCurrency.id)
-        whenReady(currenciesService.findById(newCurrency.id)) { result =>
+        whenReady(currenciesRepository.findById(newCurrency.id)) { result =>
           result should be(Some(newCurrency))
         }
       }
@@ -48,7 +48,7 @@ class CurrenciesServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val id = 4
       Delete(s"/currencies/$id") ~> route ~> check {
         response.status should be(NoContent)
-        whenReady(currenciesService.findById(id)) { result =>
+        whenReady(currenciesRepository.findById(id)) { result =>
           result should be(Option.empty[Currency])
         }
       }

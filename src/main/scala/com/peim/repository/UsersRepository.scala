@@ -1,4 +1,4 @@
-package com.peim.service
+package com.peim.repository
 
 import com.peim.model.User
 import com.peim.model.table._
@@ -8,7 +8,7 @@ import slick.driver.H2Driver.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UsersService(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
+class UsersRepository(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
 
   private val db = inject[DatabaseService].db
 

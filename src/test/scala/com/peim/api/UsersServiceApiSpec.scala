@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
 import com.peim.model.User
-import com.peim.service.UsersService
+import com.peim.repository.UsersRepository
 import com.peim.utils.BootData
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
@@ -12,7 +12,7 @@ import play.api.libs.json.Json
 class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
 
   private val users = BootData.getUsers
-  private val usersService = inject[UsersService]
+  private val usersRepository = inject[UsersRepository]
   private val route = httpService.usersRouter
 
   "Users service" should {
@@ -38,7 +38,7 @@ class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
       Post(s"/users", requestEntity) ~> route ~> check {
         status should be(Created)
         responseAs[Int] should be(newUser.id)
-        whenReady(usersService.findById(newUser.id)) { result =>
+        whenReady(usersRepository.findById(newUser.id)) { result =>
           result should be(Some(newUser))
         }
       }
@@ -50,7 +50,7 @@ class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newUser).toString)
       Put(s"/users/${newUser.id}", requestEntity) ~> route ~> check {
         status should be(NoContent)
-        whenReady(usersService.findById(newUser.id)) { result =>
+        whenReady(usersRepository.findById(newUser.id)) { result =>
           result should be(Some(newUser))
         }
       }
@@ -60,7 +60,7 @@ class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val id = 4
       Delete(s"/users/$id") ~> route ~> check {
         response.status should be(NoContent)
-        whenReady(usersService.findById(id)) { result =>
+        whenReady(usersRepository.findById(id)) { result =>
           result should be(Option.empty[User])
         }
       }

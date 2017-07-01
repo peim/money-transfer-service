@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
 import com.peim.model.Account
-import com.peim.service.AccountsService
+import com.peim.repository.AccountsRepository
 import com.peim.utils.BootData
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.Json
@@ -12,7 +12,7 @@ import play.api.libs.json.Json
 class AccountsServiceApiSpec extends BaseServiceTest with ScalaFutures {
 
   private val accounts = BootData.getAccounts
-  private val accountsService = inject[AccountsService]
+  private val accountsRepository = inject[AccountsRepository]
   private val route = httpService.accountsRouter
 
   "Accounts service" should {
@@ -38,7 +38,7 @@ class AccountsServiceApiSpec extends BaseServiceTest with ScalaFutures {
       Post(s"/accounts", requestEntity) ~> route ~> check {
         status should be(Created)
         responseAs[Int] should be(newAccount.id)
-        whenReady(accountsService.findById(newAccount.id)) { result =>
+        whenReady(accountsRepository.findById(newAccount.id)) { result =>
           result should be(Some(newAccount))
         }
       }
@@ -48,7 +48,7 @@ class AccountsServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val id = 6
       Delete(s"/accounts/$id") ~> route ~> check {
         response.status should be(NoContent)
-        whenReady(accountsService.findById(id)) { result =>
+        whenReady(accountsRepository.findById(id)) { result =>
           result should be(Option.empty[Account])
         }
       }

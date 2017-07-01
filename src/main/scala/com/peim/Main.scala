@@ -5,7 +5,8 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.peim.http.HttpService
-import com.peim.service._
+import com.peim.repository._
+import com.peim.service.TransfersService
 import com.peim.utils.{BootData, Config, DatabaseService}
 import scaldi.{Injectable, Module}
 
@@ -17,9 +18,12 @@ object Main extends App with Injectable with Config {
 
     bind[ActorSystem] to actorSystem destroyWith(_.terminate())
     bind[DatabaseService] to new DatabaseService()
-    bind[AccountsService] to new AccountsService()
-    bind[UsersService] to new UsersService()
-    bind[CurrenciesService] to new CurrenciesService()
+
+    bind[AccountsRepository] to new AccountsRepository()
+    bind[UsersRepository] to new UsersRepository()
+    bind[CurrenciesRepository] to new CurrenciesRepository()
+    bind[TransfersRepository] to new TransfersRepository()
+
     bind[TransfersService] to new TransfersService()
   }
 

@@ -1,33 +1,36 @@
 package com.peim.service
 
 import com.peim.model.Transfer
-import com.peim.model.table._
-import com.peim.utils.DatabaseService
+import com.peim.repository.{AccountsRepository, TransfersRepository}
 import scaldi.{Injectable, Injector}
-import slick.driver.H2Driver.api._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 
 class TransfersService(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
 
-  private val db = inject[DatabaseService].db
+  private val transfersRepository = inject[TransfersRepository]
+  private val accountsRepository = inject[AccountsRepository]
 
-  def findAll: Future[Seq[Transfer]] = db.run(transfers.result)
-
-  def findById(id: Int): Future[Option[Transfer]] =
-    db.run(transfers.filter(_.id === id).result.headOption)
-
-  def create(transfer: Transfer, debit: Double, credit: Double): Future[Int] = {
-    val createTransfer = (for {
-      _ <- accounts.filter(_.id === transfer.sourceAccountId)
-        .map(old => old.balance)
-        .update(debit)
-      _ <- accounts.filter(_.id === transfer.destAccountId)
-        .map(old => old.balance)
-        .update(credit)
-      t <- transfers returning transfers.map(_.id) += transfer
-    } yield t).transactionally
-
-    db.run(createTransfer)
+  def createTransfer(transfer: Transfer): Future[Try[Int]] = {
+    for {
+      src <- accountsRepository.findById(transfer.sourceAccountId)
+      dest <- accountsRepository.findById(transfer.destAccountId)
+      res <- (src, dest) match {
+        case (Some(srcAcc), Some(destAcc)) =>
+          if (srcAcc.balance >= transfer.sum) {
+            val debit = srcAcc.balance - transfer.sum
+            val credit = destAcc.balance + transfer.sum
+            transfersRepository.create(transfer, debit, credit).map(Try(_))
+          }
+          else Future(Failure(new RuntimeException(s"Недостаточно средств на счете списания")))
+        case (Some(_), None) => Future(Failure(
+          new RuntimeException(s"Счет зачисления с id ${transfer.destAccountId} не найден")))
+        case (None, Some(_)) => Future(Failure(
+          new RuntimeException(s"Счет списания с id ${transfer.sourceAccountId} не найден")))
+        case (None, None) => Future(Failure(
+          new RuntimeException(s"Счета списания и зачисления не найдены")))
+      }
+    } yield res
   }
 }
