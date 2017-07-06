@@ -7,10 +7,10 @@ import akka.stream.ActorMaterializer
 import com.peim.http.HttpService
 import com.peim.repository._
 import com.peim.service.TransfersService
-import com.peim.utils.{BootData, Config, DatabaseService}
+import com.peim.utils.{BootData, Config, DatabaseService, ExceptionHandlers}
 import scaldi.{Injectable, Module}
 
-object Main extends App with Injectable with Config {
+object Main extends App with Injectable with Config with ExceptionHandlers {
 
   implicit val appModule = new Module {
     implicit val actorSystem = ActorSystem("money-transfer-service")

@@ -9,8 +9,6 @@ import com.peim.repository.UsersRepository
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import scaldi.{Injectable, Injector}
 
-import scala.util.{Failure, Success}
-
 class UsersServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSupport {
 
   private val usersRepository = inject[UsersRepository]
@@ -18,16 +16,14 @@ class UsersServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSu
   val route: Route = pathPrefix("users") {
     pathEndOrSingleSlash {
       get {
-        onComplete(usersRepository.findAll) {
-          case Success(result) => complete(OK, result)
-          case Failure(error) => complete(InternalServerError, error.getMessage)
+        onSuccess(usersRepository.findAll) {
+          result => complete(OK, result)
         }
       } ~
         post {
           entity(as[User]) { user =>
-            onComplete(usersRepository.create(user)) {
-              case Success(result) => complete(Created, result)
-              case Failure(error) => complete(InternalServerError, error.getMessage)
+            onSuccess(usersRepository.create(user)) {
+              result => complete(Created, result)
             }
           }
         }
@@ -35,26 +31,21 @@ class UsersServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSu
       path(IntNumber) { id =>
         pathEndOrSingleSlash {
           get {
-            onComplete(usersRepository.findById(id)) {
-              case Success(result) => result match {
-                case Some(user) => complete(OK, user)
-                case None => complete(NotFound)
-              }
-              case Failure(error) => complete(InternalServerError, error.getMessage)
+            onSuccess(usersRepository.findById(id)) {
+              case Some(user) => complete(OK, user)
+              case None => complete(NotFound)
             }
           } ~
             put {
               entity(as[User]) { user =>
-                onComplete(usersRepository.update(id, user)) {
-                  case Success(_) => complete(NoContent)
-                  case Failure(error) => complete(InternalServerError, error.getMessage)
+                onSuccess(usersRepository.update(id, user)) {
+                  _ => complete(NoContent)
                 }
               }
             } ~
             delete {
-              onComplete(usersRepository.delete(id)) {
-                case Success(_) => complete(NoContent)
-                case Failure(error) => complete(InternalServerError, error.getMessage)
+              onSuccess(usersRepository.delete(id)) {
+                _ => complete(NoContent)
               }
             }
         }

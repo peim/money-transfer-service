@@ -9,8 +9,6 @@ import com.peim.repository.CurrenciesRepository
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import scaldi.{Injectable, Injector}
 
-import scala.util.{Failure, Success}
-
 class CurrenciesServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSupport {
 
   private val currenciesRepository = inject[CurrenciesRepository]
@@ -18,16 +16,14 @@ class CurrenciesServiceApi(implicit inj: Injector) extends Injectable with PlayJ
   val route: Route = pathPrefix("currencies") {
     pathEndOrSingleSlash {
       get {
-        onComplete(currenciesRepository.findAll) {
-          case Success(result) => complete(OK, result)
-          case Failure(error) => complete(InternalServerError, error.getMessage)
+        onSuccess(currenciesRepository.findAll) {
+          result => complete(OK, result)
         }
       } ~
         post {
           entity(as[Currency]) { currency =>
-            onComplete(currenciesRepository.create(currency)) {
-              case Success(result) => complete(Created, result)
-              case Failure(error) => complete(InternalServerError, error.getMessage)
+            onSuccess(currenciesRepository.create(currency)) {
+              result => complete(Created, result)
             }
           }
         }
@@ -35,20 +31,14 @@ class CurrenciesServiceApi(implicit inj: Injector) extends Injectable with PlayJ
       path(IntNumber) { id =>
         pathEndOrSingleSlash {
           get {
-            onComplete(currenciesRepository.findById(id)) {
-              case Success(result) => result match {
-                case Some(currency) => complete(OK, currency)
-                case None => complete(NotFound)
-              }
-              case Failure(error) => complete(InternalServerError, error.getMessage)
+            onSuccess(currenciesRepository.findById(id)) {
+              case Some(currency) => complete(OK, currency)
+              case None => complete(NotFound)
             }
           } ~
             delete {
-              onComplete(currenciesRepository.delete(id)) {
-                case Success(_) => complete(NoContent)
-                case Failure(error) =>
-                  println(error)
-                  complete(InternalServerError, error.getMessage)
+              onSuccess(currenciesRepository.delete(id)) {
+                _ => complete(NoContent)
               }
             }
         }

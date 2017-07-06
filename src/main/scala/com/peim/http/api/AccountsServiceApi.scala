@@ -9,8 +9,6 @@ import com.peim.repository.AccountsRepository
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import scaldi.{Injectable, Injector}
 
-import scala.util.{Failure, Success}
-
 class AccountsServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSupport {
 
   private val accountsRepository = inject[AccountsRepository]
@@ -18,16 +16,14 @@ class AccountsServiceApi(implicit inj: Injector) extends Injectable with PlayJso
   val route: Route = pathPrefix("accounts") {
     pathEndOrSingleSlash {
       get {
-        onComplete(accountsRepository.findAll) {
-          case Success(result) => complete(OK, result)
-          case Failure(error) => complete(InternalServerError, error.getMessage)
+        onSuccess(accountsRepository.findAll) {
+          result => complete(OK, result)
         }
       } ~
         post {
           entity(as[Account]) { account =>
-            onComplete(accountsRepository.create(account)) {
-              case Success(result) => complete(Created, result)
-              case Failure(error) => complete(InternalServerError, error.getMessage)
+            onSuccess(accountsRepository.create(account)) {
+              result => complete(Created, result)
             }
           }
         }
@@ -35,18 +31,14 @@ class AccountsServiceApi(implicit inj: Injector) extends Injectable with PlayJso
       path(IntNumber) { id =>
         pathEndOrSingleSlash {
           get {
-            onComplete(accountsRepository.findById(id)) {
-              case Success(result) => result match {
-                case Some(account) => complete(OK, account)
-                case None => complete(NotFound)
-              }
-              case Failure(error) => complete(InternalServerError, error.getMessage)
+            onSuccess(accountsRepository.findById(id)) {
+              case Some(account) => complete(OK, account)
+              case None => complete(NotFound)
             }
           } ~
             delete {
-              onComplete(accountsRepository.delete(id)) {
-                case Success(_) => complete(NoContent)
-                case Failure(error) => complete(InternalServerError, error.getMessage)
+              onSuccess(accountsRepository.delete(id)) {
+                _ => complete(NoContent)
               }
             }
         }

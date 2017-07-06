@@ -20,19 +20,15 @@ class TransfersServiceApi(implicit inj: Injector) extends Injectable with PlayJs
   val route: Route = pathPrefix("transfers") {
     pathEndOrSingleSlash {
       get {
-        onComplete(transfersRepository.findAll) {
-          case Success(result) => complete(OK, result)
-          case Failure(error) => complete(InternalServerError, error.getMessage)
+        onSuccess(transfersRepository.findAll) {
+          result => complete(OK, result)
         }
       } ~
         post {
           entity(as[Transfer]) { transfer =>
-            onComplete(transfersService.createTransfer(transfer)) {
-              case Success(res) => res match {
+            onSuccess(transfersService.createTransfer(transfer)) {
                 case Success(result) => complete(Created, result)
-                case Failure(error) => complete(InternalServerError, error.getMessage)
-              }
-              case Failure(error) => complete(InternalServerError, error.getMessage)
+                case Failure(error) => complete(InternalServerError, error)
             }
           }
         }
@@ -40,12 +36,9 @@ class TransfersServiceApi(implicit inj: Injector) extends Injectable with PlayJs
       path(IntNumber) { id =>
         pathEndOrSingleSlash {
           get {
-            onComplete(transfersRepository.findById(id)) {
-              case Success(result) => result match {
+            onSuccess(transfersRepository.findById(id)) {
                 case Some(transfer) => complete(OK, transfer)
                 case None => complete(NotFound)
-              }
-              case Failure(error) => complete(InternalServerError, error.getMessage)
             }
           }
         }
