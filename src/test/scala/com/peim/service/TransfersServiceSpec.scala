@@ -36,11 +36,11 @@ class TransfersServiceSpec extends BaseServiceTest with ScalaFutures {
     }
 
     "emulate money transfer service" in {
-      for (id <- 1 to 1000) {
+      for (id <- 1 to 200) {
         val (sourceAccountId, destAccountId) = getAccountsId
         val currencyId = BootData.getAccounts
           .find(_.id == sourceAccountId).map(_.currencyId).get
-        val sum = Random.nextInt(100) + 1
+        val sum = Random.nextInt(10) + 1
         val created = OffsetDateTime.now()
         val transfer = Transfer(id, sourceAccountId, destAccountId, currencyId, sum, created, Processing)
         try {

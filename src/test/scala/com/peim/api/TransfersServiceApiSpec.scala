@@ -21,7 +21,7 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
 
   "Transfers service" should {
 
-    "retrieve transfers list" in {
+    /*"retrieve transfers list" in {
       Get("/transfers") ~> route ~> check {
         status should be(OK)
         responseAs[Seq[Transfer]] should have size 3
@@ -96,6 +96,6 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
           result.map(_.balance) should be(Some(destAccount.balance))
         }
       }
-    }
+    }*/
   }
 }
