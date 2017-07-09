@@ -48,8 +48,8 @@ object BootData {
   )
 
   def getTransfers: Seq[Transfer] = Seq(
-    Transfer(1, 1, 3, 1, 200, OffsetDateTime.now(), "success"),
-    Transfer(2, 5, 4, 3, 300, OffsetDateTime.now(), "success"),
-    Transfer(3, 3, 1, 1, 100, OffsetDateTime.now(), "success")
+    Transfer(1, 1, 3, 1, 200, OffsetDateTime.now(), Approved),
+    Transfer(2, 5, 4, 3, 300, OffsetDateTime.now(), Approved),
+    Transfer(3, 3, 1, 1, 100, OffsetDateTime.now(), Approved)
   )
 }

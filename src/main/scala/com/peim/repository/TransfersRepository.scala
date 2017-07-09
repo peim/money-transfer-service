@@ -2,7 +2,7 @@ package com.peim.repository
 
 import java.time.OffsetDateTime
 
-import com.peim.model.Transfer
+import com.peim.model.{Processing, Transfer, TransferStatus}
 import com.peim.model.table._
 import com.peim.utils.DatabaseService
 import scaldi.{Injectable, Injector}
@@ -60,7 +60,9 @@ class TransfersRepository(implicit inj: Injector, executionContext: ExecutionCon
   def rollback(limitDateTime: OffsetDateTime): Future[Seq[Int]] = {
     val rollbackTransfer = (for {
       a <- (transfers join accounts on {
-        case (i1, i2) => i1.sourceAccountId === i2.id && i1.status === "processing" && i1.created <= limitDateTime
+        case (i1, i2) => i1.sourceAccountId === i2.id &&
+          i1.status === Processing.asInstanceOf[TransferStatus] &&
+          i1.created <= limitDateTime
       }).result
       b <- DBIO.sequence(a.map {
         case (transfer, account) =>
