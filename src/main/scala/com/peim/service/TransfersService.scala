@@ -13,29 +13,40 @@ import scala.util.{Failure, Success, Try}
 
 class TransfersService(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
 
-  private val lock = new ReentrantLock()
+  private val createLock = new ReentrantLock()
+  private val approveLock = new ReentrantLock()
   private val transfersRepository = inject[TransfersRepository]
 
   def createTransfer(transfer: Transfer): Future[Try[Int]] = {
-    lock.lock()
+    createLock.lock()
     val transferId = try {
       Await.result(transfersRepository.create(transfer), 20.seconds)
     } finally {
-      lock.unlock()
+      createLock.unlock()
     }
     Try(transferId) match {
       case Success(newId) =>
-        val createdTransfer = transfer.approved(newId)
-        transfersRepository.approve(createdTransfer)
-          .map(e => Try(e))
-          .recover {
-            case e: Exception => Failure(e)
-          }
+        approveLock.lock()
+        try {
+          val createdTransfer = transfer.approved(newId)
+          val res = Await.result(transfersRepository.approve(createdTransfer), 20.seconds)
+          Future(Try(res))
+        } finally {
+          approveLock.unlock()
+        }
       case Failure(error) => Future(Failure(error))
     }
   }
 
   def rollbackFailedTransfers(): Runnable = new Runnable {
-    override def run(): Unit = transfersRepository.rollback(OffsetDateTime.now().minusMinutes(1))
+    private val rollbackLock = new ReentrantLock()
+    override def run(): Unit = {
+      rollbackLock.lock()
+      try {
+        Await.result(transfersRepository.rollback(OffsetDateTime.now().minusSeconds(10)), 20.seconds)
+      } finally {
+        rollbackLock.unlock()
+      }
+    }
   }
 }

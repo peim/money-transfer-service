@@ -36,7 +36,7 @@ object Main extends App with Injectable with Config with ExceptionHandlers {
 
   new BootData().load()
 
-  system.scheduler.schedule(30.seconds, 60.seconds, inject[TransfersService].rollbackFailedTransfers())
+  system.scheduler.schedule(10.seconds, 30.seconds, inject[TransfersService].rollbackFailedTransfers())
 
   val routes = new HttpService().routes
 

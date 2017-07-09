@@ -41,10 +41,16 @@ object BootData {
 
   def getAccounts: Seq[Account] = Seq(
     Account(1, 3, 1, 500),
-    Account(2, 1, 2, 200),
+    Account(2, 1, 2, 300),
     Account(3, 3, 1, 1000),
     Account(4, 1, 3, 800),
-    Account(5, 2, 3, 400)
+    Account(5, 2, 3, 400),
+    Account(6, 3, 1, 300),
+    Account(7, 1, 3, 700),
+    Account(8, 2, 3, 500),
+    Account(9, 1, 1, 100),
+    Account(10, 2, 2, 900)
+
   )
 
   def getTransfers: Seq[Transfer] = Seq(
