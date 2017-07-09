@@ -10,6 +10,8 @@ import com.peim.service.TransfersService
 import com.peim.utils.{BootData, Config, DatabaseService, ExceptionHandlers}
 import scaldi.{Injectable, Module}
 
+import scala.concurrent.duration._
+
 object Main extends App with Injectable with Config with ExceptionHandlers {
 
   implicit val appModule = new Module {
@@ -33,6 +35,8 @@ object Main extends App with Injectable with Config with ExceptionHandlers {
   implicit val log = Logging(system, getClass)
 
   new BootData().load()
+
+  system.scheduler.schedule(30.seconds, 60.seconds, inject[TransfersService].rollbackFailedTransfers())
 
   val routes = new HttpService().routes
 
