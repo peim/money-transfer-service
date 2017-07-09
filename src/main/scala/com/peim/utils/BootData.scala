@@ -1,5 +1,7 @@
 package com.peim.utils
 
+import java.time.OffsetDateTime
+
 import com.peim.model.table._
 import com.peim.model._
 import scaldi.{Injectable, Injector}
@@ -46,8 +48,8 @@ object BootData {
   )
 
   def getTransfers: Seq[Transfer] = Seq(
-    Transfer(1, 1, 3, 1, 200, "success"),
-    Transfer(2, 5, 4, 3, 300, "success"),
-    Transfer(3, 3, 1, 1, 100, "success")
+    Transfer(1, 1, 3, 1, 200, OffsetDateTime.now(), "success"),
+    Transfer(2, 5, 4, 3, 300, OffsetDateTime.now(), "success"),
+    Transfer(3, 3, 1, 1, 100, OffsetDateTime.now(), "success")
   )
 }

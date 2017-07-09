@@ -1,5 +1,7 @@
 package com.peim.repository
 
+import java.time.OffsetDateTime
+
 import com.peim.model.Transfer
 import com.peim.model.table._
 import com.peim.utils.DatabaseService
@@ -10,6 +12,8 @@ import slick.driver.H2Driver.api._
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransfersRepository(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
+
+  import Transfer._
 
   private val db = inject[DatabaseService].db
 
@@ -51,5 +55,21 @@ class TransfersRepository(implicit inj: Injector, executionContext: ExecutionCon
     } yield b).transactionally
 
     db.run(approveTransfer)
+  }
+
+  def rollback(limitDateTime: OffsetDateTime): Future[Seq[Int]] = {
+    val rollbackTransfer = (for {
+      a <- (transfers join accounts on {
+        case (i1, i2) => i1.sourceAccountId === i2.id && i1.status === "processing" && i1.created <= limitDateTime
+      }).result
+      b <- DBIO.sequence(a.map {
+        case (transfer, account) =>
+          val canceledTransfer = transfer.canceled()
+          accounts.filter(_.id === account.id).map(_.balance).update(account.balance + transfer.sum)
+            .andThen(transfers.filter(_.id === transfer.id).map(_.status).update(canceledTransfer.status))
+      })
+    } yield b).transactionally
+
+    db.run(rollbackTransfer)
   }
 }

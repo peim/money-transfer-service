@@ -1,7 +1,9 @@
 package com.peim.service
 
+import java.time.OffsetDateTime
 import java.util.concurrent.locks.ReentrantLock
 
+import akka.actor.ActorSystem
 import com.peim.model.Transfer
 import com.peim.repository.TransfersRepository
 import scaldi.{Injectable, Injector}
@@ -12,6 +14,7 @@ import scala.util.{Failure, Success, Try}
 
 class TransfersService(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
 
+  val actorSystem = inject[ActorSystem]
   private val lock = new ReentrantLock()
   private val transfersRepository = inject[TransfersRepository]
 
@@ -33,4 +36,10 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
       case Failure(error) => Future(Failure(error))
     }
   }
+
+  def rollbackFailedTransfers(): Runnable = new Runnable {
+    override def run(): Unit = transfersRepository.rollback(OffsetDateTime.now().minusMinutes(1))
+  }
+
+  actorSystem.scheduler.schedule(30.seconds, 60.seconds, rollbackFailedTransfers())
 }
