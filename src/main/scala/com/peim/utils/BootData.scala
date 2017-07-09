@@ -46,8 +46,8 @@ object BootData {
   )
 
   def getTransfers: Seq[Transfer] = Seq(
-    Transfer(1, 1, 2, 200),
-    Transfer(2, 3, 1, 300),
-    Transfer(3, 2, 3, 100)
+    Transfer(1, 1, 3, 1, 200, "success"),
+    Transfer(2, 5, 4, 3, 300, "success"),
+    Transfer(3, 3, 1, 1, 100, "success")
   )
 }
