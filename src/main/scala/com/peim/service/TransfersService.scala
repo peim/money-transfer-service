@@ -20,7 +20,7 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
   def createTransfer(transfer: Transfer): Future[Try[Int]] = {
     createLock.lock()
     val transferId = try {
-      Await.result(transfersRepository.create(transfer), 20.seconds)
+      Await.result(transfersRepository.create(transfer), 5.seconds)
     } finally {
       createLock.unlock()
     }
@@ -29,8 +29,8 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
         approveLock.lock()
         try {
           val createdTransfer = transfer.approved(newId)
-          val res = Await.result(transfersRepository.approve(createdTransfer), 20.seconds)
-          Future(Try(res))
+          val result = Await.result(transfersRepository.approve(createdTransfer), 5.seconds)
+          Future(Try(result))
         } finally {
           approveLock.unlock()
         }
@@ -39,14 +39,8 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
   }
 
   def rollbackFailedTransfers(): Runnable = new Runnable {
-    private val rollbackLock = new ReentrantLock()
     override def run(): Unit = {
-      rollbackLock.lock()
-      try {
-        Await.result(transfersRepository.rollback(OffsetDateTime.now().minusSeconds(10)), 20.seconds)
-      } finally {
-        rollbackLock.unlock()
-      }
+      transfersRepository.rollback(OffsetDateTime.now().minusSeconds(10))
     }
   }
 }

@@ -52,7 +52,7 @@ class TransfersServiceSpec extends BaseServiceTest with ScalaFutures {
     }
 
     "check amount on all accounts [after]" in {
-      Thread.sleep(20 * 1000)
+      Thread.sleep(15 * 1000)
       transfersService.rollbackFailedTransfers().run()
       Thread.sleep(100)
       whenReady(transfersRepository.findAll) { result =>
