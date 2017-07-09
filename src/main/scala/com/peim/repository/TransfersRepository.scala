@@ -2,8 +2,8 @@ package com.peim.repository
 
 import java.time.OffsetDateTime
 
-import com.peim.model.{Processing, Transfer, TransferStatus}
 import com.peim.model.table._
+import com.peim.model.{Canceled, Processing, Transfer, TransferStatus}
 import com.peim.utils.DatabaseService
 import scaldi.{Injectable, Injector}
 import slick.dbio.DBIOAction
@@ -64,14 +64,18 @@ class TransfersRepository(implicit inj: Injector, executionContext: ExecutionCon
           i1.status === Processing.asInstanceOf[TransferStatus] &&
           i1.created <= limitDateTime
       }).result
-      b <- DBIO.sequence(a.map {
-        case (transfer, account) =>
-          val canceledTransfer = transfer.canceled()
-          accounts.filter(_.id === account.id).map(_.balance).update(account.balance + transfer.sum)
-            .andThen(transfers.filter(_.id === transfer.id).map(_.status).update(canceledTransfer.status))
-      })
+      b <- DBIO.sequence(
+        a.groupBy(_._2.id).map(e => e._1 -> e._2.map {
+          case (transfer, account) => account.balance -> transfer.sum
+        }).map(e => (e._1, e._2.map(_._1).head) -> e._2.map(_._2).sum).toSeq.map {
+          case ((accountId, balance), transfersSum) =>
+            accounts.filter(_.id === accountId).map(_.balance).update(balance + transfersSum)
+              .andThen(transfers.filter(_.status === Processing.asInstanceOf[TransferStatus])
+                .map(_.status).update(Canceled))
+        })
     } yield b).transactionally
 
     db.run(rollbackTransfer)
   }
+
 }

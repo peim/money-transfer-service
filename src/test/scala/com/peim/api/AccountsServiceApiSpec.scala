@@ -20,7 +20,7 @@ class AccountsServiceApiSpec extends BaseServiceTest with ScalaFutures {
     "retrieve accounts list" in {
       Get("/accounts") ~> route ~> check {
         status should be(OK)
-        responseAs[Seq[Account]] should have size 5
+        responseAs[Seq[Account]] should have size 10
         responseAs[Seq[Account]] should be(BootData.getAccounts)
       }
     }
@@ -33,7 +33,7 @@ class AccountsServiceApiSpec extends BaseServiceTest with ScalaFutures {
     }
 
     "create account" in {
-      val newAccount = Account(6, 1, 3, 300)
+      val newAccount = Account(11, 1, 3, 300)
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newAccount).toString)
       Post(s"/accounts", requestEntity) ~> route ~> check {
         status should be(Created)
@@ -45,7 +45,7 @@ class AccountsServiceApiSpec extends BaseServiceTest with ScalaFutures {
     }
 
     "delete account" in {
-      val id = 6
+      val id = 11
       Delete(s"/accounts/$id") ~> route ~> check {
         response.status should be(NoContent)
         whenReady(accountsRepository.findById(id)) { result =>

@@ -36,7 +36,7 @@ class TransfersServiceSpec extends BaseServiceTest with ScalaFutures {
     }
 
     "emulate money transfer service" in {
-      for (id <- 1 to 10) {
+      for (id <- 1 to 1000) {
         val (sourceAccountId, destAccountId) = getAccountsId
         val currencyId = BootData.getAccounts
           .find(_.id == sourceAccountId).map(_.currencyId).get
@@ -46,32 +46,21 @@ class TransfersServiceSpec extends BaseServiceTest with ScalaFutures {
         try {
           transfersService.createTransfer(transfer)
         } catch {
-          case e: Exception =>
-            //println(e.getMessage)
+          case _: Exception =>
         }
       }
-      println("level 1")
     }
 
     "check amount on all accounts [after]" in {
-      println("level 2")
       Thread.sleep(20 * 1000)
-      println("level 3")
       transfersService.rollbackFailedTransfers().run()
-      println("level 4")
-      Thread.sleep(2000)
-      println("level 5")
-      whenReady(accountsRepository.findAll) { result =>
-        println(result)
-        result should have size 10
-        result.map(_.balance).sum should be(5500)
-      }
-    }
-
-    "!!!" in {
+      Thread.sleep(100)
       whenReady(transfersRepository.findAll) { result =>
         result.map(_.status) should not contain Processing
-        result should have size 5
+      }
+      whenReady(accountsRepository.findAll) { result =>
+        result should have size 10
+        result.map(_.balance).sum should be(5500)
       }
     }
   }
