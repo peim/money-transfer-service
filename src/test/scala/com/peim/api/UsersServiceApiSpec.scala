@@ -3,7 +3,7 @@ package com.peim.api
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
-import com.peim.model.User
+import com.peim.model.{IdWrapper, User}
 import com.peim.repository.UsersRepository
 import com.peim.utils.BootData
 import org.scalatest.concurrent.ScalaFutures
@@ -37,7 +37,7 @@ class UsersServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newUser).toString)
       Post(s"/users", requestEntity) ~> route ~> check {
         status should be(Created)
-        responseAs[Int] should be(newUser.id)
+        responseAs[IdWrapper] should be(IdWrapper(newUser.id))
         whenReady(usersRepository.findById(newUser.id)) { result =>
           result should be(Some(newUser))
         }

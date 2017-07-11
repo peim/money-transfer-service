@@ -3,7 +3,7 @@ package com.peim.api
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
-import com.peim.model.Account
+import com.peim.model.{Account, IdWrapper}
 import com.peim.repository.AccountsRepository
 import com.peim.utils.BootData
 import org.scalatest.concurrent.ScalaFutures
@@ -37,7 +37,7 @@ class AccountsServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newAccount).toString)
       Post(s"/accounts", requestEntity) ~> route ~> check {
         status should be(Created)
-        responseAs[Int] should be(newAccount.id)
+        responseAs[IdWrapper] should be(IdWrapper(newAccount.id))
         whenReady(accountsRepository.findById(newAccount.id)) { result =>
           result should be(Some(newAccount))
         }

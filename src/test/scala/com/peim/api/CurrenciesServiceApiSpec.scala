@@ -3,7 +3,7 @@ package com.peim.api
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
-import com.peim.model.Currency
+import com.peim.model.{Currency, IdWrapper}
 import com.peim.repository.CurrenciesRepository
 import com.peim.utils.BootData
 import org.scalatest.concurrent.ScalaFutures
@@ -37,7 +37,7 @@ class CurrenciesServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newCurrency).toString)
       Post(s"/currencies", requestEntity) ~> route ~> check {
         status should be(Created)
-        responseAs[Int] should be(newCurrency.id)
+        responseAs[IdWrapper] should be(IdWrapper(newCurrency.id))
         whenReady(currenciesRepository.findById(newCurrency.id)) { result =>
           result should be(Some(newCurrency))
         }

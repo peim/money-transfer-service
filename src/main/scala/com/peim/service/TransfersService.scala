@@ -8,7 +8,7 @@ import com.peim.repository.TransfersRepository
 import scaldi.{Injectable, Injector}
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext}
 import scala.util.{Failure, Success, Try}
 
 class TransfersService(implicit inj: Injector, executionContext: ExecutionContext) extends Injectable {
@@ -17,7 +17,7 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
   private val approveLock = new ReentrantLock()
   private val transfersRepository = inject[TransfersRepository]
 
-  def createTransfer(transfer: Transfer): Future[Try[Int]] = {
+  def createTransfer(transfer: Transfer): Try[Int] = {
     createLock.lock()
     val transferId = try {
       Await.result(transfersRepository.create(transfer), 5.seconds)
@@ -29,12 +29,11 @@ class TransfersService(implicit inj: Injector, executionContext: ExecutionContex
         approveLock.lock()
         try {
           val createdTransfer = transfer.approved(newId)
-          val result = Await.result(transfersRepository.approve(createdTransfer), 5.seconds)
-          Future(Try(result))
+          Try(Await.result(transfersRepository.approve(createdTransfer), 5.seconds))
         } finally {
           approveLock.unlock()
         }
-      case Failure(error) => Future(Failure(error))
+      case Failure(error) => Failure(error)
     }
   }
 

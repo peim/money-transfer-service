@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MarshallingDirectives.{as, entity}
-import com.peim.model.User
+import com.peim.model.{IdWrapper, User}
 import com.peim.repository.UsersRepository
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import scaldi.{Injectable, Injector}
@@ -23,7 +23,7 @@ class UsersServiceApi(implicit inj: Injector) extends Injectable with PlayJsonSu
         post {
           entity(as[User]) { user =>
             onSuccess(usersRepository.create(user)) {
-              result => complete(Created, result)
+              result => complete(Created, IdWrapper(result))
             }
           }
         }
