@@ -21,7 +21,7 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
 
   "Transfers service" should {
 
-    /*"retrieve transfers list" in {
+    "retrieve transfers list" in {
       Get("/transfers") ~> route ~> check {
         status should be(OK)
         responseAs[Seq[Transfer]] should have size 3
@@ -82,7 +82,7 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
       val sourceAccount = accounts.find(_.id == 4).get
       val destAccount = accounts.find(_.id == 2).get
       val newTransfer = Transfer(5, sourceAccount.id, destAccount.id, sourceAccount.currencyId,
-        100, OffsetDateTime.now(), Processing)
+        200, OffsetDateTime.now(), Processing)
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newTransfer).toString)
       Post(s"/transfers", requestEntity) ~> route ~> check {
         status should be(InternalServerError)
@@ -96,6 +96,6 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
           result.map(_.balance) should be(Some(destAccount.balance))
         }
       }
-    }*/
+    }
   }
 }

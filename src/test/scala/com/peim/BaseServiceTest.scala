@@ -11,12 +11,15 @@ import scaldi.{Injectable, Module}
 
 trait BaseServiceTest extends WordSpec
   with Matchers
+  with BeforeAndAfterAll
   with ScalatestRouteTest
   with Injectable
   with PlayJsonSupport {
 
+  val database =  new DatabaseService()
+
   implicit val testModule = new Module {
-    bind[DatabaseService] to new DatabaseService()
+    bind[DatabaseService] to database
 
     bind[AccountsRepository] to new AccountsRepository()
     bind[UsersRepository] to new UsersRepository()
@@ -26,6 +29,17 @@ trait BaseServiceTest extends WordSpec
     bind[TransfersService] to new TransfersService()
   }
 
-  new BootData().load()
+  private val data = new BootData()
+
   val httpService = new HttpService()
+
+  override def beforeAll(): Unit = {
+    data.load()
+    Thread.sleep(500)
+  }
+
+  override def afterAll(): Unit = {
+    data.clean()
+    Thread.sleep(500)
+  }
 }

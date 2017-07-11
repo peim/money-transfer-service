@@ -11,9 +11,14 @@ class BootData(implicit inj: Injector) extends Injectable {
 
   import BootData._
 
+  private val databaseService = inject[DatabaseService]
+
   def load(): Unit = {
-    val databaseService = inject[DatabaseService]
     databaseService.db.run(setup)
+  }
+
+  def clean(): Unit = {
+    databaseService.db.run(drop)
   }
 
   private val setup = DBIO.seq(
@@ -22,6 +27,13 @@ class BootData(implicit inj: Injector) extends Injectable {
     users ++= getUsers,
     accounts ++= getAccounts,
     transfers ++= getTransfers
+  )
+
+  private val drop = DBIO.seq(
+    transfers.schema.drop,
+    accounts.schema.drop,
+    currencies.schema.drop,
+    users.schema.drop
   )
 }
 
