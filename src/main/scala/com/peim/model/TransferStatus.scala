@@ -1,5 +1,6 @@
 package com.peim.model
 
+import com.peim.model.exception.IllegalTransferStatusException
 import play.api.libs.json._
 import slick.driver.H2Driver.api._
 
@@ -29,7 +30,7 @@ object TransferStatus {
     case "approved" => Approved
     case "processing" => Processing
     case "canceled" => Canceled
-    case _ => throw new RuntimeException(s"Unrecognized transfer status: $str")
+    case _ => throw new IllegalTransferStatusException(s"Unrecognized transfer status: $str")
   }
 
   def toString(value: TransferStatus): String = value match {

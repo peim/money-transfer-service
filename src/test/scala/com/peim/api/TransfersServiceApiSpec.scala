@@ -2,7 +2,7 @@ package com.peim.api
 
 import java.time.OffsetDateTime
 
-import akka.http.scaladsl.model.StatusCodes.{Created, InternalServerError, OK}
+import akka.http.scaladsl.model.StatusCodes.{Created, OK}
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
 import com.peim.model.{Processing, Transfer, TransferView}
@@ -65,7 +65,6 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
         1000, OffsetDateTime.now(), Processing)
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newTransfer).toString)
       Post(s"/transfers", requestEntity) ~> route ~> check {
-        status should be(InternalServerError)
         whenReady(transfersRepository.findById(newTransfer.id)) { result =>
           result should be(Option.empty[Transfer])
         }
@@ -85,7 +84,6 @@ class TransfersServiceApiSpec extends BaseServiceTest with ScalaFutures {
         200, OffsetDateTime.now(), Processing)
       val requestEntity = HttpEntity(MediaTypes.`application/json`, Json.toJson(newTransfer).toString)
       Post(s"/transfers", requestEntity) ~> route ~> check {
-        status should be(InternalServerError)
         whenReady(transfersRepository.findById(newTransfer.id)) { result =>
           result.map(TransferView.apply) should be(Some(TransferView.apply(newTransfer)))
         }

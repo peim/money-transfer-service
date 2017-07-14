@@ -1,4 +1,4 @@
-package com.peim.model
+package com.peim.model.response
 
 import play.api.libs.json.{Format, Json}
 

@@ -3,7 +3,8 @@ package com.peim.api
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, MediaTypes}
 import com.peim.BaseServiceTest
-import com.peim.model.{IdWrapper, User}
+import com.peim.model.User
+import com.peim.model.response.IdWrapper
 import com.peim.repository.UsersRepository
 import com.peim.utils.BootData
 import org.scalatest.concurrent.ScalaFutures

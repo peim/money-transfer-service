@@ -2,6 +2,7 @@ package com.peim.repository
 
 import java.time.OffsetDateTime
 
+import com.peim.model.exception.IllegalAccountException
 import com.peim.model.table._
 import com.peim.model.{Canceled, Processing, Transfer, TransferStatus}
 import com.peim.utils.DatabaseService
@@ -33,7 +34,7 @@ class TransfersRepository(implicit inj: Injector, executionContext: ExecutionCon
           accounts.filter(_.id === transfer.sourceAccountId).map(_.balance).update(newBalance)
             .andThen(transfers returning transfers.map(_.id) += transfer)
         case None =>
-          DBIOAction.failed(new RuntimeException(s"Appropriate source account by id ${transfer.sourceAccountId} not found"))
+          DBIOAction.failed(new IllegalAccountException(s"Appropriate source account by id ${transfer.sourceAccountId} not found"))
       }
     } yield b).transactionally
 
@@ -50,7 +51,7 @@ class TransfersRepository(implicit inj: Injector, executionContext: ExecutionCon
           accounts.filter(_.id === transfer.destAccountId).map(_.balance).update(newBalance)
             .andThen(transfers.filter(_.id === transfer.id).map(_.status).update(transfer.status))
         case None =>
-          DBIOAction.failed(new RuntimeException(s"Appropriate dest account by id ${transfer.destAccountId} not found"))
+          DBIOAction.failed(new IllegalAccountException(s"Appropriate dest account by id ${transfer.destAccountId} not found"))
       }
     } yield b).transactionally
 

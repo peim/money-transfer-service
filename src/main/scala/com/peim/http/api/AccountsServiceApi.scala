@@ -4,7 +4,8 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MarshallingDirectives.{as, entity}
-import com.peim.model.{Account, IdWrapper}
+import com.peim.model.Account
+import com.peim.model.response.IdWrapper
 import com.peim.repository.AccountsRepository
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import scaldi.{Injectable, Injector}

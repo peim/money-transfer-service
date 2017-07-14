@@ -4,13 +4,21 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, MethodRejection, RejectionHandler, ValidationRejection}
-import com.peim.model.ErrorResponse
+import com.peim.model.exception.MoneyServiceException
+import com.peim.model.response.ErrorResponse
 import play.api.libs.json.Json
 
 trait ExceptionHandlers {
 
   implicit def exceptionHandler: ExceptionHandler =
     ExceptionHandler {
+      case e: MoneyServiceException =>
+        extractUri { uri =>
+          val errorResponse = ErrorResponse(Conflict.intValue,
+            "Conflict", e.getMessage)
+          val entity = HttpEntity(ContentTypes.`application/json`, Json.toJson(errorResponse).toString)
+          complete(HttpResponse(Conflict, entity = entity))
+        }
       case e: Exception =>
         extractUri { uri =>
           val errorResponse = ErrorResponse(InternalServerError.intValue,
